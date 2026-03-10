@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:studyplatform/splash/splash_screen.dart';
 
 import 'auth/repository/auth_repository.dart';
 import 'auth/cubit/auth_cubit.dart';
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: isLoggedIn ? const HomeScreen() : const LoginScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
