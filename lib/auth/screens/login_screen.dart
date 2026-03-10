@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../../screens/home_screen.dart';
@@ -13,9 +14,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
   bool _obscurePassword = true;
 
   @override
@@ -28,106 +31,98 @@ class _LoginScreenState extends State<LoginScreen> {
   void _onLoginPressed() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthCubit>().login(
-            _emailController.text,
-            _passwordController.text,
-          );
+        _emailController.text,
+        _passwordController.text,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = ThemeData(
-      colorScheme: const ColorScheme.light(
-        primary: Colors.black,
-        onPrimary: Colors.white,
-        surface: Colors.white,
-        onSurface: Colors.black,
-      ),
-      useMaterial3: true,
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.grey.shade100,
-        contentPadding: const EdgeInsets.all(20),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.black, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red, width: 1),
-        ),
-      ),
-    );
 
-    return Theme(
-      data: theme,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: BlocListener<AuthCubit, AuthState>(
+    return Scaffold(
+
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF9DCBBC),
+              Color(0xFFFFFFFF),
+            ],
+          ),
+        ),
+
+        child: BlocListener<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const HomeScreen()),
-                (route) => false,
+                    (route) => false,
               );
             } else if (state is AuthFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.errorMessage),
                   backgroundColor: Colors.black,
-                  behavior: SnackBarBehavior.floating,
                 ),
               );
             }
           },
+
           child: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+
               child: Form(
                 key: _formKey,
+
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 60),
-                    const Icon(Icons.school_rounded, size: 80, color: Colors.black),
-                    const SizedBox(height: 32),
-                    const Text(
-                      'Welcome back',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        letterSpacing: -1,
+                    ClipRect(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        heightFactor: 0.56,
+                        child: Image.asset(
+                          "assets/images/logo.png",
+                          height: 200,
+                        ),
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'study app',
-                      style: TextStyle(
+                    const SizedBox(height: 10),
+                    Text(
+                      "Welcome back",
+                      style: GoogleFonts.poppins(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF15524C),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      "your learning space awaits",
+                      style: GoogleFonts.poppins(
                         fontSize: 16,
                         color: Colors.black54,
-                        letterSpacing: 1.5,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 48),
+
+                    const SizedBox(height: 60),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                      decoration: const InputDecoration(
-                        hintText: 'Email address',
-                        prefixIcon: Icon(Icons.email_outlined, color: Colors.black54),
+                      decoration: InputDecoration(
+                        hintText: "Enter your gmail",
+                        prefixIcon: const Icon(Icons.email_outlined),
+
+                        filled: true,
+                        fillColor: Colors.white,
+
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
@@ -135,92 +130,170 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+
+                    const SizedBox(height: 15),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.done,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+
                       decoration: InputDecoration(
-                        hintText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.black54),
+                        hintText: "Password",
+                        prefixIcon: const Icon(Icons.lock_outline),
+
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                            color: Colors.black54,
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                           ),
-                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
+
+                        filled: true,
+                        fillColor: Colors.white,
+
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
                         ),
                       ),
+
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         if (value.length < 6) return 'Minimum 6 characters';
                         return null;
                       },
                     ),
-                    const SizedBox(height: 40),
+
+                    const SizedBox(height: 25),
                     BlocBuilder<AuthCubit, AuthState>(
                       builder: (context, state) {
-                        return FilledButton(
-                          onPressed: state is AuthLoading ? null : _onLoginPressed,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        return SizedBox(
+                          width: double.infinity,
+                          height: 55,
+
+                          child: ElevatedButton(
+                            onPressed: state is AuthLoading ? null : _onLoginPressed,
+
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFEC995B),
+
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+
+                            child: state is AuthLoading
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : const Text(
+                              "Sign In",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          child: state is AuthLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text(
-                                  'Sign In',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
                         );
                       },
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 25),
+                    Row(
+                      children: const [
+
+                        Expanded(child: Divider()),
+
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text("Or"),
+                        ),
+
+                        Expanded(child: Divider()),
+                      ],
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    socialButton(
+                        "Continue with Google",
+                        "assets/images/google.png"
+                    ),
+
+                    const SizedBox(height: 12),
+                    socialButton(
+                        "Continue with Facebook",
+                        "assets/images/facebook.png"
+                    ),
+
+                    const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          "Don't have an account?",
-                          style: TextStyle(color: Colors.black54),
-                        ),
+
+                        const Text("Don't have an account? "),
+
                         TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                              MaterialPageRoute(
+                                builder: (_) => const SignUpScreen(),
+                              ),
                             );
                           },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.black,
-                          ),
+
                           child: const Text(
-                            'Sign Up',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            "Sign Up",
+                            style: TextStyle(
+                              color: Color(0xFF15524C),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+                        )
                       ],
                     ),
+
+                    const SizedBox(height: 20),
+
                   ],
                 ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget socialButton(String text, String imagePath) {
+    return Container(
+      width: double.infinity,
+      height: 50,
+
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+
+          Image.asset(
+            imagePath,
+            height: 20,
+          ),
+
+          const SizedBox(width: 10),
+
+          Text(text),
+
+        ],
       ),
     );
   }
